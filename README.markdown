@@ -55,3 +55,20 @@ Always make sure that chords (that don't have a sharp `#` or flat `b` after them
     I  love mu-sic  >>>   I  love mu-sic
     
 Chords like G/B should have at least three spaces following them because if the song were transposed to `F#` the chord would take a total of five characters `F#/A#` instead of the original three.
+
+###Measures and Time Signatures
+Also allowed on chord lines are `|` which are used to denote measures. And an optional number, typically a `2`, `3` or a `4`, can be appended to indicate the time signature, or rather, the number of beats per measure. For example, `|3` means three beats per measure. The purpose is to encode rhythmic precision to the chart, especially when used for ensemble playing.
+
+    <pre data-key="G">
+    | G                       D/F#             |3 Em
+      There's nothing you can do that can't be done
+    |4 G            D/F#              |3 Em
+    Nothing you can sing that can't be sung
+    |4 D7/A               G               | D/F#                D7/C
+      Nothing you you can say but you can learn how to play the game
+         | D7        D7/C    |3 D7/B      D7
+    It's easy
+    | G       Asus    | D7
+      All you need is love
+    </pre>
+
