@@ -68,7 +68,7 @@ Also allowed on chord lines are `|` which are used to denote measures. And an op
       Nothing you you can say but you can learn how to play the game
          | D7        D7/C    |3 D7/B      D7
     It's easy
-    | G       Asus    | D7
+    |4 G      Asus    | D7
       All you need is love
     </pre>
 
