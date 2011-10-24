@@ -60,7 +60,7 @@ Chords like G/B should have at least three spaces following them because if the 
 Also allowed on chord lines are `|` which are used to denote measures, and an optional time signature, for example, `|3/4`. The purpose is to encode rhythmic precision to the chart, especially when used for ensemble playing.
 
     <pre data-key="G">
-    | G                       D/F#             |3 Em
+    |4/4 G                    D/F#             |3/4 Em
       There's nothing you can do that can't be done
     |4/4 G          D/F#              |3/4 Em
     Nothing you can sing that can't be sung
