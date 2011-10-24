@@ -10,29 +10,40 @@
  */
 (function($) {
 
+/*!
+ * jQuery Chord Transposer plugin v1.0
+ * http://codegavin.com/projects/transposer
+ *
+ * Copyright 2010, Jesse Gavin
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://codegavin.com/license
+ *
+ * Date: Sat Jun 26 21:27:00 2010 -0600
+ */
   $.fn.transpose = function(options) {
     var opts = $.extend({}, $.fn.transpose.defaults, options);
     
     var currentKey = null;
     
     var keys = [
-      { name: 'Ab',  value: 0,   type: 'F' },
-      { name: 'A',   value: 1,   type: 'N' },
-      { name: 'A#',  value: 2,   type: 'S' },
-      { name: 'Bb',  value: 2,   type: 'F' },
-      { name: 'B',   value: 3,   type: 'N' },
-      { name: 'C',   value: 4,   type: 'N' },
-      { name: 'C#',  value: 5,   type: 'S' },
-      { name: 'Db',  value: 5,   type: 'F' },
-      { name: 'D',   value: 6,   type: 'N' },
-      { name: 'D#',  value: 7,   type: 'S' },
-      { name: 'Eb',  value: 7,   type: 'F' },
-      { name: 'E',   value: 8,   type: 'N' },
-      { name: 'F',   value: 9,   type: 'N' },
-      { name: 'F#',  value: 10,  type: 'S' },
-      { name: 'Gb',  value: 10,  type: 'F' },
-      { name: 'G',   value: 11,  type: 'N' },
-      { name: 'G#',  value: 0,   type: 'S' }
+      { name: 'Ab',  value: 0,   type: 'F', rel: 'Fm',  real: 1 },
+      { name: 'A',   value: 1,   type: 'N', rel: 'F#m', real: 1 },
+      { name: 'A#',  value: 2,   type: 'S', rel: 'Gm',  real: 0 },
+      { name: 'Bb',  value: 2,   type: 'F', rel: 'Gm',  real: 1 },
+      { name: 'B',   value: 3,   type: 'N', rel: 'G#m', real: 1 },
+ //   { name: 'Cb',  value: 3,   type: 'F', rel: 'Abm', real: 1 },
+      { name: 'C',   value: 4,   type: 'N', rel: 'Am',  real: 1 },
+      { name: 'C#',  value: 5,   type: 'S', rel: 'A#m', real: 1 },
+      { name: 'Db',  value: 5,   type: 'F', rel: 'Bbm', real: 1 },
+      { name: 'D',   value: 6,   type: 'N', rel: 'Bm',  real: 1 },
+      { name: 'D#',  value: 7,   type: 'S', rel: 'B#m', real: 0 },
+      { name: 'Eb',  value: 7,   type: 'F', rel: 'Cm',  real: 1 },
+      { name: 'E',   value: 8,   type: 'N', rel: 'C#m', real: 1 },
+      { name: 'F',   value: 9,   type: 'N', rel: 'Dm',  real: 1 },
+      { name: 'F#',  value: 10,  type: 'S', rel: 'D#m', real: 1 },
+      { name: 'Gb',  value: 10,  type: 'F', rel: 'Ebm', real: 1 },
+      { name: 'G',   value: 11,  type: 'N', rel: 'Em',  real: 1 },
+      { name: 'G#',  value: 0,   type: 'S', rel: 'E#m', real: 0 }
     ];
   
     var getKeyByName = function (name) {
@@ -139,7 +150,7 @@
     var transposeChord = function (selector, delta, targetKey) {
         var el = $(selector);
         var oldChord = el.text();
-        if (oldChord.match(/^\|\d?$/)) { return }
+        if (oldChord.match(/^\|(\d\/\d)?$/)) { return }
         var oldChordRoot = getChordRoot(oldChord);
         var newChordRoot = getNewKey(oldChordRoot, delta, targetKey);
         var newChord = newChordRoot.name + oldChord.substr(oldChordRoot.length);
@@ -202,10 +213,13 @@
       // Build tranpose links ===========================================
       var keyLinks = [];
       $(keys).each(function(i, key) {
-          if (currentKey.name == key.name)
-              keyLinks.push("<a href='#' class='selected'>" + key.name + "</a>");
-          else
-              keyLinks.push("<a href='#'>" + key.name + "</a>");
+          if (key.real == 1) {
+              var key_pair = key.name + "<br />-<br />" + key.rel;
+              if (currentKey.name == key.name)
+                  keyLinks.push("<a href='#' class='selected'>" + key_pair + "</a>");
+              else
+                  keyLinks.push("<a href='#'>" + key_pair + "</a>");
+          }
       });
 
 
@@ -214,13 +228,14 @@
       keysHtml.html(keyLinks.join(""));
       $("a", keysHtml).click(function(e) {
           e.preventDefault();
-          transposeSong($this, $(this).text());
+          var key = $(this).text().split('-')[0];
+          transposeSong($this, key);
           $(".transpose-keys a").removeClass("selected");
           $(this).addClass("selected");
           return false;
       });
       
-      $(this).before(keysHtml);
+      $(this).after(keysHtml);
 
       var output = [];
       var lines = $(this).text().split("\n");
@@ -239,10 +254,9 @@
     });
   };
 
-
   $.fn.transpose.defaults = {
-    chordRegex: /^[A-G\|]\d?[b\#]?(2|5|6|7|9|11|13|6\/9|7\-5|7\-9|7\#5|7\#9|7\+5|7\+9|7b5|7b9|7sus2|7sus4|add2|add4|add9|aug|dim|dim7|m\/maj7|m6|m7|m7b5|m9|m11|m13|maj7|maj9|maj11|maj13|mb5|m|sus|sus2|sus4)*(\/[A-G][b\#]*)*$/,
-    chordReplaceRegex: /([A-G\|]\d?[b\#]?(2|5|6|7|9|11|13|6\/9|7\-5|7\-9|7\#5|7\#9|7\+5|7\+9|7b5|7b9|7sus2|7sus4|add2|add4|add9|aug|dim|dim7|m\/maj7|m6|m7|m7b5|m9|m11|m13|maj7|maj9|maj11|maj13|mb5|m|sus|sus2|sus4)*)/g
+    chordRegex: /^([A-G\|](\d\/\d)?[b\#]?(maj|m|dim|aug|sus|\+|\-)?\d?(b|\#|\+|\-)?\d?)*(\/[A-G][b\#]*)*$/,
+    chordReplaceRegex: re=/([A-G\|](\d\/\d)?[b\#]?(maj|m|dim|aug|sus|\+|\-)?\d?(b|\#|\+|\-)?\d?)/g
   };
 
 })(jQuery);
